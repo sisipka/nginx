@@ -48,7 +48,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'ls'
             }
             container('kubectl') { 
-                sh 'kubectl get pods -n default'  
+                sh 'kubectl get pods -n jenkins'  
             }
             container('helm') { 
                 sh 'helm init --client-only --skip-refresh'
