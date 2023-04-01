@@ -55,7 +55,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             }
             container('helm') { 
                 sh 'helm list'
-                sh 'helm repo update'     
+                sh 'helm version'     
             }
         }  
 
