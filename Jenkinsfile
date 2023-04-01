@@ -75,6 +75,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             container('docker') { 
               sh 'whoami'
               sh 'hostname -i' 
+              sh 'curl $(hostname -i):80'
               sh "docker run ${REPOSITORY_URI}:${BUILD_NUMBER} npm run test "                 
             }
         }
