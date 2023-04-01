@@ -1,5 +1,5 @@
 FROM nginx
 COPY . /usr/share/nginx/html/
 WORKDIR /usr/share/nginx/html/
-RUN npm install
+RUN apt update && npm install
 EXPOSE 80
