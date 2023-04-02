@@ -51,8 +51,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'hostname -i' 
                 sh 'docker ps'
                 sh 'ls'
-                sh 'sed 's/number/${BUILD_NUMBER}' ./index.html'
-                sh 'cat index.html'
             }
             container('kubectl') { 
                 sh 'kubectl get pods -n jenkins'  
