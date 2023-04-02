@@ -96,6 +96,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh "helm list | grep ${HELM_APP_NAME}"
               }
             }      
-        }
+        
     }
 }
