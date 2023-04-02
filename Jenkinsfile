@@ -39,6 +39,8 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
     node('mypod') {
 
         def REPOSITORY_URI = "sisipka/nginx"
+        def HELM_APP_NAME = "nginx-app"
+        def HELM_CHART_DIRECTORY = "helm_nginx"
 
         stage('Get latest version of code') {
           checkout scm
