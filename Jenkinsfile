@@ -51,6 +51,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'hostname -i' 
                 sh 'docker ps'
                 sh 'ls'
+                sh 'echo "nginx-app version ${BUILD_NUMBER}" >> index.html'
             }
             container('kubectl') { 
                 sh 'kubectl get pods -n jenkins'  
@@ -94,7 +95,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             container('helm'){
                 sh 'helm list'
                 sh "helm lint ./${HELM_CHART_DIRECTORY}"
-                sh "helm upgrade -i -n jenkins --wait --timeout 60 --set image.tag=${BUILD_NUMBER} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+                sh "helm upgrade -i -n jenkins --set image.tag=${BUILD_NUMBER} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
                 sh "helm list | grep ${HELM_APP_NAME}"
               }
             }      
