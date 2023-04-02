@@ -51,7 +51,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'hostname -i' 
                 sh 'docker ps'
                 sh 'ls'
-                sh 'echo "nginx-app version ${BUILD_NUMBER}" >> index.html'
+                sh 'sed 's/number/${BUILD_NUMBER}' ./index.html'
                 sh 'cat index.html'
             }
             container('kubectl') { 
