@@ -61,6 +61,15 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             }
         }  
 
+        stage('Check Chart Version') {
+            steps {
+                script {
+                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print $3}'").trim()
+                    env.CHART_VERSION = chartVersion
+                }
+            }
+        }
+
         stage('Build Image'){
             container('docker'){
 
@@ -93,25 +102,32 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         } 
         
          stage('Deploy Image to k8s'){
-            def currentVersion = sh script: "helm list -a -n jenkins | grep ${HELM_APP_NAME} | awk '{print $10}'", returnStdout: true
-            def newVersion = sh script: "cat ${HELM_CHART_DIRECTORY}/Chart.yaml | grep 'appVersion' | awk '{print $3}'", returnStdout: true
-            if(currentVersion.trim() != newVersion.trim()) {
-                container('helm'){
-                    sh 'helm list'
-                    sh "helm lint ./${HELM_CHART_DIRECTORY}"
-                    sh "helm upgrade -i -n jenkins --set image.tag=${BUILD_NUMBER} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
-                    sh "helm list | grep ${HELM_APP_NAME}"
-                }
+            when {
+                expression { return env.CHART_VERSION != env.LAST_CHART_VERSION }
+            }
                 container('docker'){
                   withCredentials([usernamePassword(credentialsId: 'docker-login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh 'docker image ls'
-                    sh "docker push ${REPOSITORY_URI}:${BUILD_NUMBER}"
+                    sh "docker push ${REPOSITORY_URI}:${env.CHART_VERSION}"
                   }                 
-                }  
-            } else {
-                echo "No changes in appVersion detected. Skipping helm upgrade."
-            }
-          }      
+                }
+                container('helm'){
+                    sh 'helm list'
+                    sh "helm lint ./${HELM_CHART_DIRECTORY}"
+                    sh "helm upgrade -i -n jenkins --set image.tag=${env.CHART_VERSION} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+                    sh "helm list | grep ${HELM_APP_NAME}"
+                }
+                  
+             
+          }
+          post {
+             always {
+                script {
+                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print $2}'").trim()
+                    env.LAST_CHART_VERSION = chartVersion
+                }
+        }
+    }      
         
     }
 }
