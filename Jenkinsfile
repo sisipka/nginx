@@ -41,8 +41,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         def REPOSITORY_URI = "sisipka/nginx"
         def HELM_APP_NAME = "nginx-app"
         def HELM_CHART_DIRECTORY = "helm_nginx"
-        def currentVersion = sh: "helm list -a -n jenkins | grep nginx | awk '{print "\$10"}'", returnStdout: true
-        def newVersion = sh: "cat ${HELM_CHART_DIRECTORY}/Chart.yaml | grep 'appVersion' | awk '{print "\$3"}'", returnStdout: true
 
         stage('Get latest version of code') {
           checkout scm
@@ -95,6 +93,8 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         } 
         
          stage('Deploy Image to k8s'){
+            def currentVersion = sh script: "helm list -a -n jenkins | grep ${HELM_APP_NAME} | awk '{print $10}'", returnStdout: true
+            def newVersion = sh script: "cat ${HELM_CHART_DIRECTORY}/Chart.yaml | grep 'appVersion' | awk '{print $3}'", returnStdout: true
             if(currentVersion.trim() != newVersion.trim()) {
                 container('helm'){
                     sh 'helm list'
