@@ -123,7 +123,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
           post {
              always {
                 script {
-                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print $2}'").trim()
+                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print \$2}'").trim()
                     env.LAST_CHART_VERSION = chartVersion
                 }
         }
