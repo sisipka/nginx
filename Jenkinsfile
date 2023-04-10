@@ -120,7 +120,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 env.LAST_CHART_VERSION = chartVersion
             }
         }
-    }      
+        
         
     }
 }
