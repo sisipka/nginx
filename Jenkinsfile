@@ -53,9 +53,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'ls'
                 def chartVersion = sh("cat ./${HELM_CHART_DIRECTORY}/Chart.yaml | grep 'appVersion' | awk '{print \$3}'")
                 env.CHART_VERSION = chartVersion
-                sh 'echo "CHART_VERSION = \$env.CHART_VERSION"'
-                sh 'echo "\$chartVersion"'
-                return env.CHART_VERSION
+              
             }
             container('kubectl') { 
                 sh 'kubectl get pods -n jenkins'  
@@ -101,20 +99,20 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             when {
                 expression { return env.CHART_VERSION != env.LAST_CHART_VERSION }
             }
-            steps {
-                container('docker'){
-                  withCredentials([usernamePassword(credentialsId: 'docker-login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker image ls'
-                    sh "docker push ${REPOSITORY_URI}:${BUILD_NUMBER}"
-                  }                 
+                steps {
+                    container('docker'){
+                      withCredentials([usernamePassword(credentialsId: 'docker-login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker image ls'
+                        sh "docker push ${REPOSITORY_URI}:${BUILD_NUMBER}"
+                      }                 
+                    }
+                    container('helm'){
+                        sh 'helm list'
+                        sh "helm lint ./${HELM_CHART_DIRECTORY}"
+                        sh "helm upgrade -i -n jenkins --set image.tag=${env.CHART_VERSION} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+                        sh "helm list | grep ${HELM_APP_NAME}"
+                    }
                 }
-                container('helm'){
-                    sh 'helm list'
-                    sh "helm lint ./${HELM_CHART_DIRECTORY}"
-                    sh "helm upgrade -i -n jenkins --set image.tag=${env.CHART_VERSION} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
-                    sh "helm list | grep ${HELM_APP_NAME}"
-                }
-            }
                   
              
           }
