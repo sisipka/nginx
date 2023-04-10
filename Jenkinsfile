@@ -51,6 +51,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'hostname -i' 
                 sh 'docker ps'
                 sh 'ls'
+                sh "cat ./${HELM_CHART_DIRECTORY}/Chart.yaml | grep 'appVersion' | awk '{print $3}'"
             }
             container('kubectl') { 
                 sh 'kubectl get pods -n jenkins'  
