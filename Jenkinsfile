@@ -64,7 +64,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         stage('Check Chart Version') {
             steps {
                 script {
-                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print $3}'").trim()
+                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print \$3}'").trim()
                     env.CHART_VERSION = chartVersion
                 }
             }
