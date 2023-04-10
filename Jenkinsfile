@@ -63,15 +63,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             }
         }  
 
-        stage('Check Chart Version') {
-            steps {
-                script {
-                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print \$3}'").trim()
-                    env.CHART_VERSION = chartVersion
-                }
-            }
-        }
-
         stage('Build Image'){
             container('docker'){
 
@@ -123,11 +114,11 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
              
           }
           post {
-             always {
-                script {
-                    def chartVersion = sh(returnStdout: true, script: "grep '^appVersion:' Chart.yaml | awk '{print \$2}'").trim()
-                    env.LAST_CHART_VERSION = chartVersion
-                }
+             container('docker') {  
+                sh 'ls'
+                def chartVersion = sh("cat ./${HELM_CHART_DIRECTORY}/Chart.yaml | grep 'appVersion' | awk '{print \$3}'")
+                env.LAST_CHART_VERSION = chartVersion
+            }
         }
     }      
         
