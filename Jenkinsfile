@@ -55,6 +55,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 env.CHART_VERSION = chartVersion
                 sh 'echo "CHART_VERSION = \$env.CHART_VERSION"'
                 sh 'echo "\$chartVersion"'
+                return env.CHART_VERSION
             }
             container('kubectl') { 
                 sh 'kubectl get pods -n jenkins'  
