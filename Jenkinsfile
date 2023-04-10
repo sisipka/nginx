@@ -53,6 +53,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'ls'
                 def chartVersion = sh("cat ./${HELM_CHART_DIRECTORY}/Chart.yaml | grep 'appVersion' | awk '{print \$3}'")
                 env.CHART_VERSION = chartVersion
+                sh 'echo "CHART_VERSION = \$env.CHART_VERSION"'
             }
             container('kubectl') { 
                 sh 'kubectl get pods -n jenkins'  
