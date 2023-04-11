@@ -94,9 +94,8 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         } 
         
         stage('Deploy Image to k8s'){
-            when {
-                buildingTag()
-            }
+            if(env.TAG_NAME != null){
+
                 container('helm'){
                   sh 'helm list'
                   sh "helm lint ./${HELM_CHART_DIRECTORY}"
@@ -104,7 +103,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                   sh "helm list | grep ${HELM_APP_NAME}"
                   sh 'echo "$tag"'
                   }
-            
+            }
          }      
         
     }
