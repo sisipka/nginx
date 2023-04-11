@@ -44,6 +44,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
 
         stage('Get latest version of code') {
           checkout scm
+          sh 'git fetch --all --tags'
         }
         stage('Check running containers') {
             container('docker') {  
