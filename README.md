@@ -16,7 +16,7 @@ https://hub.docker.com/repository/docker/sisipka/nginx/general
 
 - Dashboard Jenkins → Управление плагинами → Устанавливаем плагины **Multibranch Scan Webhook Trigger** и **Basic Branch Build Strategies**
 
-- Dashboard Jenkins → Новый элемент → Назование проекта → Выберите Multibranch Pipeline → нажмите Ok 
+- Dashboard Jenkins → Новый элемент → Назование проекта → Выберите Multibranch Pipeline → нажмите Ok
 
 - Внутри проекта:
 
