@@ -94,10 +94,11 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         } 
         
         stage('Deploy Image to k8s'){
+          when { expression { sh([returnStdout: true, script: 'echo $TAG_NAME | tr -d \'\n\'']) } }
             container('helm'){
               sh 'helm list'
               sh "helm lint ./${HELM_CHART_DIRECTORY}"
-              sh "helm upgrade -i -n jenkins --set image.tag=${BUILD_NUMBER} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+              sh "helm upgrade -i -n jenkins --set image.tag=$TAG_NAME ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
               sh "helm list | grep ${HELM_APP_NAME}"
               }  
          }      
