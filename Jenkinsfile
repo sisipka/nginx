@@ -96,21 +96,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             when {
                 buildingTag()
             }
-            container('docker'){
-
-              withCredentials([usernamePassword(credentialsId: 'docker-login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh 'docker login --username="${USERNAME}" --password="${PASSWORD}"'
-                sh "docker build -t ${REPOSITORY_URI}:${tag} ."
-                sh 'docker image ls' 
-              } 
-                
-            }
-            container('docker'){
-              withCredentials([usernamePassword(credentialsId: 'docker-login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh 'docker image ls'
-                sh "docker push ${REPOSITORY_URI}:${tag}"
-              }                 
-            }
           
             container('helm'){
               sh 'helm list'
