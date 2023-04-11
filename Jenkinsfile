@@ -44,7 +44,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
 
         stage('Get latest version of code') {
           checkout scm
-          checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: "${gitLabServer}/${projectName}/${repo}.git", credentialsId: credential]], branches: [[name: tag-version]]],poll: false
           sh 'git fetch --all --tags'
         }
         stage('Check running containers') {
