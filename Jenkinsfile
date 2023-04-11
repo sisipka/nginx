@@ -93,16 +93,27 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         } 
         
         stage('Deploy Image to k8s'){
-            when { tag "v*"            
-            }
-          
-            container('helm'){
-              sh 'helm list'
-              sh 'echo $tag'
-              sh 'echo ${tag}'
-              sh 'echo "happy day"'
-              sh 'echo "$tag"'
-              }
+            def tag = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
+            if (tag){
+                container('docker'){
+                  withCredentials([usernamePassword(credentialsId: 'docker-login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh 'docker login --username="${USERNAME}" --password="${PASSWORD}"'
+                    sh "docker build -t ${REPOSITORY_URI}:$tag ."
+                    sh 'docker image ls' 
+
+                    sh 'docker image ls'
+                    sh "docker push ${REPOSITORY_URI}:$tag"
+                  } 
+                    
+                }
+                container('helm'){
+                  sh 'helm list'
+                  sh "helm lint ./${HELM_CHART_DIRECTORY}"
+                  sh "helm upgrade -i -n jenkins --set image.tag=$tag ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+                  sh "helm list | grep ${HELM_APP_NAME}"
+                }
+            }  
+         
             
          }      
         
