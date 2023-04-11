@@ -96,9 +96,13 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
             when { tag "v*"            
             }
           
-            sh 'echo $tag'
-            sh 'echo ${tag}'
-            sh 'echo "happy day"'
+            container('helm'){
+              sh 'helm list'
+              sh 'echo $tag'
+              sh 'echo ${tag}'
+              sh 'echo "happy day"'
+              sh 'echo "$tag"'
+              }
             
          }      
         
