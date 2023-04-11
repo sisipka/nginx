@@ -44,7 +44,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
 
         stage('Get latest version of code') {
           checkout scm
-          sh 'git fetch --all --tags'
         }
         stage('Check running containers') {
             container('docker') {  
@@ -52,7 +51,6 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
                 sh 'hostname -i' 
                 sh 'docker ps'
                 sh 'ls'
-              
             }
             container('kubectl') { 
                 sh 'kubectl get pods -n jenkins'  
