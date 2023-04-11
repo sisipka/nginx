@@ -94,16 +94,15 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         } 
         
         stage('Deploy Image to k8s'){
-            def tag = sh(returnStdout: true, script: "git tag --contains | head -1").trim()
-            if (tag){
-                container('helm'){
-                  sh 'helm list'
-                  sh "helm lint ./${HELM_CHART_DIRECTORY}"
-                  sh "helm upgrade -i -n jenkins --set image.tag=$tag ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
-                  sh "helm list | grep ${HELM_APP_NAME}"
-                  sh 'echo "$tag"'
-                  }
-            }  
+            when { tag "v*" }
+            container('helm'){
+              sh 'helm list'
+              sh "helm lint ./${HELM_CHART_DIRECTORY}"
+              sh "helm upgrade -i -n jenkins --set image.tag=$tag ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+              sh "helm list | grep ${HELM_APP_NAME}"
+              sh 'echo "$tag"'
+              }
+             
          }      
         
     }
