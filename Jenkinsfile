@@ -80,6 +80,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
               sh 'hostname -i'
               sh 'cat /etc/os-release'
               sh 'echo $TAG_NAME'
+              sh 'echo $tag_name'
             }
         }
 
