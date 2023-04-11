@@ -79,8 +79,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
               sh 'whoami'
               sh 'hostname -i'
               sh 'cat /etc/os-release'
-              sh 'echo ${currentVersion}'
-              sh 'echo ${newVersion}'                  
+              sh 'echo $TAG_NAME'
             }
         }
 
