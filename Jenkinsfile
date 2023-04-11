@@ -95,7 +95,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         
         stage('Deploy Image to k8s'){
             if(env.TAG_NAME != null){
-
+                println(" we are building a tag and tag is ${env.TAG_NAME}")
                 container('helm'){
                   sh 'helm list'
                   sh "helm lint ./${HELM_CHART_DIRECTORY}"
