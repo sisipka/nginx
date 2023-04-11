@@ -94,9 +94,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
         } 
         
         stage('Deploy Image to k8s'){
-            when { 
-              tag "" 
-            }
+            when { tag "v*" }
             container('helm'){
               sh 'helm list'
               sh "helm lint ./${HELM_CHART_DIRECTORY}"
